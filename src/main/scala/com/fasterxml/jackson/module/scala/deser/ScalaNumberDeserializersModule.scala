@@ -37,6 +37,9 @@ private abstract class BigNumberDeserializer[T >: Null : ClassTag](creator: (Str
         ctxt.handleUnexpectedToken(_valueClass, jp).asInstanceOf[T]
     }
   }
+
+  // Crazy workaround for https://github.com/scala/scala-dev/issues/623
+  override def getNullValue(ctx: DeserializationContext): T with Object = super.getNullValue.asInstanceOf[T with Object]
 }
 
 private object BigDecimalDeserializer extends BigNumberDeserializer(BigDecimal.apply)
@@ -59,3 +62,4 @@ private object NumberDeserializers extends Deserializers.Base
 trait ScalaNumberDeserializersModule extends JacksonModule {
   this += NumberDeserializers
 }
+
